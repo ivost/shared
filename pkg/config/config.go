@@ -35,9 +35,7 @@ func DefaultConfig() *Config {
 }
 
 func New(yamlFile string) *Config {
-	if yamlFile == "" {
-		return DefaultConfig()
-	}
+	log.Printf("New config, yamlFile: %v\n", yamlFile)
 	conf := DefaultConfig()
 	configFile := yamlFile
 
@@ -58,14 +56,17 @@ func New(yamlFile string) *Config {
 		//flags,
 	)
 	_ = mconfig.Scan(conf)
-
-	configFile = GetStringFlag("config")
+	if yamlFile == "" {
+		configFile = GetStringFlag("config")
+	} else {
+		configFile = yamlFile
+	}
 
 	if _, err = os.Stat(configFile); err != nil {
 		log.Printf("Config file %v not found", configFile)
 		return conf
 	}
-	log.Printf("Using config file %v", configFile)
+	log.Printf("Reading config file %v", configFile)
 	mconfig.LoadFile(configFile)
 	_ = mconfig.Scan(conf)
 	//log.Printf("config: %+v", conf)
