@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package myvault;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+// field numbers 1 through 15 take one byte to encode
+message HealthResponse {
+    string status = 2;
+    string time = 4;
+    string name = 6;
+    string address = 8;
+    string version = 10;
+    string build = 12;
+}
+
+service VaultService{
+    // unary
+
+    rpc Health(google.protobuf.Empty) returns (HealthResponse) {
+        option (google.api.http) = {
+                get: "/health"
+            };
+    }
+
+}
