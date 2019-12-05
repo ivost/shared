@@ -142,11 +142,11 @@ kpf: ## - port forwarding (grpc port 52052, rest port 8080)
 
 .PHONY: kcall
 kcall: build ## - grpc client test calls after kdep
-	build/client -config=client-config.yaml
+	build/client -config=test/client-config.yaml
 
 .PHONY: test
 test: build ## - integration testing sript (local, see test.sh)
-	./test.sh
+	cd test  && ./test.sh
 
 .PHONY: ktest
 ktest: ## - integration testing after kdep (see ktest.sh)
