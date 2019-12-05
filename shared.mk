@@ -29,11 +29,13 @@ run: build   ## - Build and run server (local)
 .PHONY: build
 build:  ## - local build (server+client)
 	make -C ../shared/grpc all
+	go get github.com/ivost/shared@latest
 	go $(BUILD_TARGET) $(BUILDFLAGS) -o build/server cmd/server/server.go
 	go $(BUILD_TARGET) $(BUILDFLAGS) -o build/client cmd/client/client.go
 
 .PHONY: build.linux
 build-linux:  ## - Build server binary for linux (simple and multi-phase builds are very slow)
+	go get github.com/ivost/shared@latest
 	GOOS=linux go $(BUILD_TARGET) $(BUILDFLAGS) -o docker/lbuild/server cmd/server/server.go
 	GOOS=linux go $(BUILD_TARGET) $(BUILDFLAGS) -o docker/lbuild/client cmd/client/client.go
 
