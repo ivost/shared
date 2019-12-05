@@ -1,6 +1,4 @@
 
-include common.mk
-
 define msg
 	@printf "\033[36m $1 \n\033[0m"
 endef
@@ -31,15 +29,14 @@ run: build   ## - Build and run server (local)
 
 .PHONY: build
 build:  ## - local build (server+client)
-	./proto-gen.sh
-	#go env
+	make -C ../shared/grpc all
 	go $(BUILD_TARGET) $(BUILDFLAGS) -o build/server cmd/server/server.go
 	go $(BUILD_TARGET) $(BUILDFLAGS) -o build/client cmd/client/client.go
 
 .PHONY: build.linux
 build-linux:  ## - Build server binary for linux (simple and multi-phase builds are very slow)
-	GOOS=linux go $(BUILD_TARGET) $(BUILDFLAGS) -o lbuild/server cmd/server/server.go
-	GOOS=linux go $(BUILD_TARGET) $(BUILDFLAGS) -o lbuild/client cmd/client/client.go
+	GOOS=linux go $(BUILD_TARGET) $(BUILDFLAGS) -o docker/lbuild/server cmd/server/server.go
+	GOOS=linux go $(BUILD_TARGET) $(BUILDFLAGS) -o docker/lbuild/client cmd/client/client.go
 
 ##########
 # Docker #
@@ -50,7 +47,7 @@ dbuild:	build-linux ## - Build local - copy to docker image
 	@echo Building docker image $(IMG)
 	# todo: make minikube/local containers conditional
 	eval $(minikube docker-env)
-	docker image build --label $(NAME) --tag $(IMG) .
+	docker image build --label $(NAME) --tag $(IMG) docker
 
 .PHONY: dbuild.multi
 dbuild.multi:	## - Build docker image in CI
@@ -154,7 +151,7 @@ test: build ## - integration testing sript (local, see test.sh)
 
 .PHONY: ktest
 ktest: ## - integration testing after kdep (see ktest.sh)
-	./ktest.sh
+	cd test && ./ktest.sh
 
 .PHONY: kpod
 kpod: ## - show $(NAME) pods
