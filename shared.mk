@@ -8,7 +8,7 @@ define msgc
 	@printf "\n"
 endef
 
-#.PHONY: all
+.PHONY: all
 .DEFAULT_GOAL := all
 all: dpush kred ## - docker build / push / deploy to k8s
 
@@ -20,8 +20,7 @@ list: ## - List all make targets
 ### .DEFAULT_GOAL := help
 help: ## - Show help message
 	$(call msgc,"usage: make [target]")
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":*?## "}; {printf "\033[36m%-20s\033[0m \t %s\n", $$1, $$2}'
 
 .PHONY: run
 run: build   ## - Build and run server (local)
