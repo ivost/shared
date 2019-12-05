@@ -1,47 +1,5 @@
-BUILD_TARGET = build
-#GO := GO111MODULE=on GOOS=linux GOARCH=amd64 go
-GO := go
-GO_NOMOD := GO111MODULE=off go
-NAME := myservice
 
-# dockerhub
-DOCKER_REPO=ivostoy
-DAEMON=
-VERSION=0.12.4.5
-
-# Make does not offer a recursive wildcard function, so here's one:
-rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
-
-#RELEASE_ORG_REPO := $(ORG_REPO)
-#ROOT_PACKAGE := github.com/$(ORG_REPO)
-GO_VERSION := $(shell $(GO) version | sed -e 's/^[^0-9.]*\([0-9.]*\).*/\1/')
-GO_DEPENDENCIES := $(call rwildcard,pkg/,*.go) $(call rwildcard,cmd/,*.go)
-
-BRANCH     := $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null  || echo 'unknown')
-BUILD_DATE := $(shell date +%Y%m%d-%H:%M:%S)
-PKG=github.com/ivost/sandbox/myservice/pkg
-GIT_COMMIT=$(shell git describe --dirty --always  2> /dev/null  || echo 'unknown')
-BUILDFLAGS=-ldflags "-s -w -X ${PKG}/version.Version=${VERSION} -X ${PKG}/version.Build=${GIT_COMMIT}"
-CGO_ENABLED = 0
-MAIN_SRC_FILE=main.go
-IMG_TAG=${VERSION}-${GIT_COMMIT}
-IM=${DOCKER_REPO}/${NAME}
-IMG=${DOCKER_REPO}/${NAME}:${IMG_TAG}
-
-IMG_BLD_TAG=build_${VERSION}
-IMG_BLD=${DOCKER_REPO}/${NAME}:${IMG_BLD_TAG}
-
-BASE=./kustomize/base
-OVERLAYS=./kustomize/overlays
-POD:=$(shell kubectl get pod -l app=myservice -o  jsonpath='{.items[*].metadata.name}') > /dev/nul
-
-# kubectl get pods -l app=hello -o=jsonpath="{range .items[*]}{.metadata.name}{"\n"}{end}"
-
-# kubectl get pods -l app=hello -o jsonpath="{.items[*]['metadata.name']}"
-
-# kubectl get pods -l app=ambassador -o jsonpath="{.items[*]['metadata.name']}"
-
-#include common.mk
+include common.mk
 
 define msg
 	@printf "\033[36m $1 \n\033[0m"

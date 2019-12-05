@@ -3,7 +3,7 @@ package config_test
 import (
 	"testing"
 
-	"github.com/ivost/sandbox/myservice/config"
+	"github.com/ivost/shared/pkg/config"
 	"github.com/stretchr/testify/require"
 )
 

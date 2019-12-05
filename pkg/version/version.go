@@ -1,5 +1,5 @@
 package version
 
-var Name = "myservice"
+var Name = "name"
 var Version = "0.0.0.0"
 var Build = ""
