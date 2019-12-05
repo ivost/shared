@@ -40,21 +40,27 @@ func New(yamlFile string) *Config {
 	}
 	conf := DefaultConfig()
 	configFile := yamlFile
-	flag.StringVar(&configFile, "config", DefaultConfigFile, "config file")
-	flag.StringVar(&conf.GrpcAddr, "grpc", DefaultGrpc, "grpc address")
-	flag.StringVar(&conf.RestAddr, "rest", DefaultRest, "rest address")
-	flag.IntVar(&conf.Secure, "secure", 0, "secure: 0=no TLS, 1=server, 2=mTLS")
+
+	RegStringVar(&configFile, "config", DefaultConfigFile, "config file")
+
+	RegStringVar(&conf.GrpcAddr, "grpc", DefaultGrpc, "grpc address")
+	RegStringVar(&conf.RestAddr, "rest", DefaultRest, "rest address")
+	RegIntVar(&conf.Secure, "secure", 0, "secure: 0=no TLS, 1=server, 2=mTLS")
 	flag.Parse()
 	//https://micro.mu/docs/go-config.html
 	flags := mflag.NewSource( /* mflag.IncludeUnset(true), */ )
 	flags.Read()
+
 	err := mconfig.Load(
 		// base config from env
 		env.NewSource(),
 		// flag override
-		flags,
+		//flags,
 	)
 	_ = mconfig.Scan(conf)
+
+	configFile = GetStringFlag("config")
+
 	if _, err = os.Stat(configFile); err != nil {
 		log.Printf("Config file %v not found", configFile)
 		return conf
@@ -64,4 +70,24 @@ func New(yamlFile string) *Config {
 	_ = mconfig.Scan(conf)
 	//log.Printf("config: %+v", conf)
 	return conf
+}
+
+func RegStringVar(p *string, name string, value string, usage string) {
+	if flag.Lookup(name) == nil {
+		flag.StringVar(p, name, value, usage)
+	}
+}
+
+func GetStringFlag(name string) string {
+	return flag.Lookup(name).Value.(flag.Getter).Get().(string)
+}
+
+func RegIntVar(p *int, name string, value int, usage string) {
+	if flag.Lookup(name) == nil {
+		flag.IntVar(p, name, value, usage)
+	}
+}
+
+func GetIntFlag(name string) int {
+	return flag.Lookup(name).Value.(flag.Getter).Get().(int)
 }
