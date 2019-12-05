@@ -56,10 +56,12 @@ func New(yamlFile string) *Config {
 	)
 	_ = mconfig.Scan(conf)
 	if _, err = os.Stat(configFile); err != nil {
+		log.Printf("Config file %v not found", configFile)
 		return conf
 	}
-	log.Printf("Using config file %v", configFile)
+	log.Printf("= Using config file %v", configFile)
 	mconfig.LoadFile(configFile)
 	_ = mconfig.Scan(conf)
+	//log.Printf("config: %+v", conf)
 	return conf
 }

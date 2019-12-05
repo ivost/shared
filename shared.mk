@@ -24,7 +24,7 @@ help: ## - Show help message
 
 .PHONY: run
 run: build   ## - Build and run server (local)
-	build/server
+	build/server -config test/config.yaml
 
 .PHONY: build
 build:  ## - local build (server+client)
